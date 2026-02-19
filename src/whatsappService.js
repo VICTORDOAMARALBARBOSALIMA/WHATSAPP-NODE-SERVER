@@ -35,21 +35,21 @@ export async function initSession(clinic_id) {
     }
 
     const client = new Client({
-        authStrategy: new LocalAuth({
-            clientId: clinic_id,
-            dataPath: path.resolve('./sessions')
-        }),
-        puppeteer: {
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu',
-                '--disable-software-rasterizer'
-            ]
-        }
-    });
+  authStrategy: new LocalAuth({
+    clientId: clinic_id,
+    dataPath: path.resolve('./sessions')
+  }),
+  puppeteer: {
+    headless: true,
+    executablePath: '/usr/bin/chromium',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu'
+    ]
+  }
+});
 
     clients[clinic_id] = client;
 
