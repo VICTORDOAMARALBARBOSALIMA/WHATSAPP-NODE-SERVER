@@ -1,4 +1,4 @@
-import { Client, LocalAuth } from 'whatsapp-web.js';
+import pkg from "whatsapp-web.js";
 import path from 'path';
 import fs from 'fs';
 import qrcode from 'qrcode-terminal';
@@ -7,6 +7,7 @@ import { logMessage } from '../utils/logger.js';
 
 if (!fs.existsSync('./sessions')) fs.mkdirSync('./sessions');
 
+const { Client, LocalAuth } = pkg;
 const clients = {};
 const scheduledMessages = [];
 
