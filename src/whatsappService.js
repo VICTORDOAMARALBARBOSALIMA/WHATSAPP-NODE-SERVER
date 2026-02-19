@@ -13,23 +13,40 @@ const scheduledMessages = [];
 
 // Inicializa sessão WhatsApp
 export async function initSession(clinic_id) {
-    if (clients[clinic_id]) return clients[clinic_id];
+    if (clients[clinic_id]) {
+        const existingClient = clients[clinic_id];
+
+        if (existingClient.info) {
+            return existingClient; // já está pronto
+        }
+
+        // espera ficar ready
+        await new Promise(resolve => {
+            existingClient.once('ready', resolve);
+        });
+
+        return existingClient;
+    }
 
     const client = new Client({
-        authStrategy: new LocalAuth({ clientId: clinic_id, dataPath: path.resolve('./sessions') })
+        authStrategy: new LocalAuth({
+            clientId: clinic_id,
+            dataPath: path.resolve('./sessions')
+        }),
+        puppeteer: {
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        }
     });
 
-    client.on('qr', qr => {
-        console.log(`QR Code para clinic ${clinic_id}:`);
-        qrcode.generate(qr, { small: true });
-    });
-
-    client.on('ready', () => console.log(`WhatsApp pronto para ${clinic_id}`));
-    client.on('auth_failure', () => console.log(`Falha de autenticação: ${clinic_id}`));
-    client.on('disconnected', () => console.log(`Sessão desconectada: ${clinic_id}`));
-
-    client.initialize();
     clients[clinic_id] = client;
+
+    await client.initialize();
+
+    await new Promise(resolve => {
+        client.once('ready', resolve);
+    });
+
     return client;
 }
 
