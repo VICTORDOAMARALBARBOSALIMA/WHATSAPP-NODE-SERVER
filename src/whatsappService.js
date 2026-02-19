@@ -39,16 +39,16 @@ export async function initSession(clinic_id) {
     clientId: clinic_id,
     dataPath: path.resolve('./sessions')
   }),
-  puppeteer: {
-    headless: true,
-    executablePath: '/usr/bin/chromium',
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu'
-    ]
-  }
+ puppeteer: {
+  headless: true,
+  executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu'
+  ]
+}
 });
 
     clients[clinic_id] = client;
